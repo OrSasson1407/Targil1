@@ -1,13 +1,15 @@
 # ── Build stage ───────────────────────────────────────────────────────────────
 FROM ubuntu:22.04 AS builder
 
+# Install build tools and Google Test source
 RUN apt-get update && apt-get install -y \
     cmake \
     build-essential \
-    libssl-dev \
-    wget \
-    unzip \
+    libgtest-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Compile Google Test so CMake can find it globally
+RUN cd /usr/src/gtest && cmake CMakeLists.txt && make && cp lib/*.a /usr/lib
 
 WORKDIR /app
 COPY . .
