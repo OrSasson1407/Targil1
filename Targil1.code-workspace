@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"name": "Targil1",
+			"path": "."
+		},
+		{
+			"name": "tests",
+			"path": "../../../../Downloads/Targil1-complete/Targil1-main/tests"
+		},
+		{
+			"name": "src",
+			"path": "../../../../Downloads/Targil1-complete/Targil1-main/src"
+		},
+		{
+			"name": "data",
+			"path": "../../../../Downloads/Targil1-complete/Targil1-main/data"
+		}
+	],
+	"settings": {}
+}
