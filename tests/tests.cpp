@@ -12,7 +12,7 @@
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-// Build the exact userData map from the assignment appendix example.
+// Build the exactt userData map from the assignment appendix example.
 static std::unordered_map<std::string, std::unordered_set<std::string>>
 buildExampleData() {
     return {
