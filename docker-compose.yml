@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+
+  # ── Exercise-2 C++ recommendation server ──────────────────────────────────
+  ex2-server:
+    build:
+      context: ../Targil1-main   # path to the Ex-2 repo (adjust if needed)
+      dockerfile: Dockerfile
+    container_name: ex2-server
+    ports:
+      - "5555:5555"
+    # The C++ server reads its port from argv[1]
+    command: ["./server", "5555"]
+
+  # ── Exercise-3 Node.js web server ─────────────────────────────────────────
+  web-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: web-server
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      EX2_HOST: "ex2-server"   # Docker DNS name of the Ex-2 container
+      EX2_PORT: "5555"
+    depends_on:
+      - ex2-server

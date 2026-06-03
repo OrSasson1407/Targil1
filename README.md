@@ -44,15 +44,36 @@ help
 add [userid] [productid1] [productid2] …
 recommend [userid] [productid]
 help
+
+
 Building & Running
-Local
-bashmkdir build && cd build
+Local Development
+1. Build the project:
+
+Bash
+mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 cmake --build . --parallel
+2. Run the application:
+
+Bash
 cd .. && ./build/recommendation_system
-Docker — App
-bashdocker build -t recommendation_system .
+3. Run the tests locally:
+Assuming your CMakeLists.txt is configured to build the test suite, run the following from your build directory:
+
+Bash
+# Run all tests using CTest
+ctest --output-on-failure
+Docker
+1. Build the Docker image:
+
+Bash
+docker build -t recommendation_system .
+2. Run the application:
+
+Bash
 docker run -it --rm -v "$(pwd)/data:/app/data" recommendation_system
-Docker — Tests
-bashdocker build -t recommendation_system .
+3. Run the tests in Docker:
+
+Bash
 docker run --rm recommendation_system ./run_tests
