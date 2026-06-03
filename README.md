@@ -8,7 +8,7 @@ A multi-exercise project built across three branches, combining a C++ recommenda
 
 | Branch | Exercise | Description |
 |---|---|---|
-| `SCRUM-29-my-feature` | **EX1** | C++ CLI-based collaborative filtering recommendation engine |
+| `SCRUM-29-my-feature` |  **EX1** | C++ CLI-based collaborative filtering recommendation engine |
 | `SCRUM-38-Targil-2` | **EX2** | C++ TCP server wrapping the EX1 recommendation engine |
 | `main` | **EX3** | Node.js/Express RESTful food delivery server, integrates with EX2 |
 
