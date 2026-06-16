@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+﻿import { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { apiPost, apiGet } from '../api';
@@ -58,7 +58,7 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-card card">
-        <div className="auth-logo">??</div>
+        <div className="auth-logo">🍔</div>
         <h1 className="auth-title">Welcome back</h1>
         <p className="auth-subtitle">Sign in to your Wolt account</p>
 

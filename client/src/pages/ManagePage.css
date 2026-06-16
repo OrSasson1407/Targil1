@@ -1,0 +1,19 @@
+﻿.manage-page { min-height: 100vh; background: var(--bg); }
+.manage-content { max-width: 860px; margin: 0 auto; padding: 32px 16px; }
+.manage-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; }
+.manage-title { font-size: 1.8rem; font-weight: 700; color: var(--text); }
+.manage-loading { color: var(--text-muted); text-align: center; margin-top: 60px; }
+.manage-empty { text-align: center; margin-top: 80px; color: var(--text-muted); }
+.manage-empty .empty-icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+.manage-form { padding: 24px; margin-bottom: 28px; border-radius: 12px; }
+.manage-form h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; color: var(--text); }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+.form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+.manage-list { display: flex; flex-direction: column; gap: 16px; }
+.manage-card { padding: 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
+.manage-card-info h3 { font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.manage-card-info p { font-size: 0.85rem; color: var(--text-muted); margin: 2px 0; }
+.manage-card-actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+.btn-danger { background: #ef4444; color: #fff; border: none; }
+.btn-danger:hover { background: #dc2626; }

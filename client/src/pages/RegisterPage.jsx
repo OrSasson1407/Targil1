@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+﻿import { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiPost, apiGet } from '../api';
 import { useAuth } from '../context/AuthContext';
@@ -117,7 +117,7 @@ export default function RegisterPage() {
   return (
     <div className="auth-page">
       <div className="auth-card auth-card-wide card">
-        <div className="auth-logo">??</div>
+        <div className="auth-logo">🍔</div>
         <h1 className="auth-title">Create account</h1>
         <p className="auth-subtitle">Join Wolt and order your favorite food</p>
 
@@ -128,7 +128,7 @@ export default function RegisterPage() {
             <div className="avatar-preview">
               {avatarPreview
                 ? <img src={avatarPreview} alt="avatar" />
-                : <span>??</span>
+                : <span>👁️</span>
               }
             </div>
             <label className="btn btn-outline avatar-btn">

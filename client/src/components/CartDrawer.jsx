@@ -1,4 +1,4 @@
-import { useCart } from '../context/CartContext';
+﻿import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { apiPost } from '../api';
 import { useState, useRef } from 'react';
@@ -37,11 +37,11 @@ export default function CartDrawer({ open, onClose, onOrderPlaced }) {
       {open && <div className="cart-overlay" onClick={onClose} />}
       <div className={'cart-drawer card' + (open ? ' open' : '')}>
         <div className="cart-header">
-          <h2 className="cart-title">?? Your Order</h2>
+          <h2 className="cart-title">🛒 Your Order</h2>
           <button className="btn-icon" onClick={onClose}>?</button>
         </div>
 
-        {success && <div className="alert alert-success">?? Order placed successfully!</div>}
+        {success && <div className="alert alert-success">✅ Order placed successfully!</div>}
 
         {!success && (
           <>
@@ -51,7 +51,7 @@ export default function CartDrawer({ open, onClose, onOrderPlaced }) {
 
             {cart.items.length === 0 ? (
               <div className="cart-empty">
-                <span>??</span>
+                <span>🗑️</span>
                 <p>Your cart is empty</p>
               </div>
             ) : (
@@ -61,7 +61,7 @@ export default function CartDrawer({ open, onClose, onOrderPlaced }) {
                     <div key={item.id} className="cart-item">
                       <div className="cart-item-info">
                         <span className="cart-item-name">{item.name}</span>
-                        <span className="cart-item-price">�{(item.price * item.quantity).toFixed(2)}</span>
+                        <span className="cart-item-price">ן¿½{(item.price * item.quantity).toFixed(2)}</span>
                       </div>
                       <div className="cart-item-controls">
                         <button className="qty-btn" onClick={() => removeItem(item.id)}>?</button>
@@ -74,7 +74,7 @@ export default function CartDrawer({ open, onClose, onOrderPlaced }) {
 
                 <div className="cart-total">
                   <span>Total</span>
-                  <span className="cart-total-price">�{totalPrice.toFixed(2)}</span>
+                  <span className="cart-total-price">ן¿½{totalPrice.toFixed(2)}</span>
                 </div>
 
                 <div className="input-group" style={{marginTop: 12}}>
@@ -91,7 +91,7 @@ export default function CartDrawer({ open, onClose, onOrderPlaced }) {
                 {error && <div className="alert alert-error" style={{marginTop:8}}>{error}</div>}
 
                 <button className="btn btn-primary btn-full" style={{marginTop:16}} onClick={handleOrder} disabled={loading}>
-                  {loading ? 'Placing order...' : 'Place Order 🛒'}
+                  {loading ? 'Placing order...' : 'Place Order נ›’'}
                 </button>
               </>
             )}

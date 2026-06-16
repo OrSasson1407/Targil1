@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -104,13 +104,13 @@ export default function RestaurantPage({ theme, setTheme }) {
       <div className="rp-hero">
         <div className="rp-hero-inner">
           <button className="btn-back" onClick={() => navigate('/')}>? Back</button>
-          <div className="rp-hero-emoji">???</div>
+          <div className="rp-hero-emoji">🏪</div>
           <h1 className="rp-name">{restaurant.name}</h1>
           <div className="rp-meta">
             {restaurant.cuisineType  && <span className="rp-tag">{restaurant.cuisineType}</span>}
-            {restaurant.address      && <span className="rp-meta-item">?? {restaurant.address}</span>}
-            {restaurant.phone        && <span className="rp-meta-item">?? {restaurant.phone}</span>}
-            {restaurant.openingHours && <span className="rp-meta-item">?? {restaurant.openingHours}</span>}
+            {restaurant.address      && <span className="rp-meta-item">📍 {restaurant.address}</span>}
+            {restaurant.phone        && <span className="rp-meta-item">📞 {restaurant.phone}</span>}
+            {restaurant.openingHours && <span className="rp-meta-item">🕐 {restaurant.openingHours}</span>}
           </div>
         </div>
       </div>
@@ -137,7 +137,7 @@ export default function RestaurantPage({ theme, setTheme }) {
                 <input ref={categoryRef} className="input" type="text" placeholder="e.g. Starters" />
               </div>
               <div className="input-group">
-                <label>Price (�) *</label>
+                <label>Price (₪) *</label>
                 <input ref={priceRef} className="input" type="number" min="0" step="0.01" placeholder="0.00" />
               </div>
               <div className="input-group" style={{gridColumn:'1/-1'}}>
@@ -153,7 +153,7 @@ export default function RestaurantPage({ theme, setTheme }) {
 
         {products.length === 0 ? (
           <div className="empty-state">
-            <span className="empty-icon">???</span>
+            <span className="empty-icon">🍽️</span>
             <p>No menu items yet. Add the first one!</p>
           </div>
         ) : (
@@ -168,7 +168,7 @@ export default function RestaurantPage({ theme, setTheme }) {
                       className="delete-product-btn"
                       onClick={() => handleDeleteProduct(p.id)}
                       title="Delete item"
-                    >???</button>
+                    >✏️</button>
                   </div>
                 ))}
               </div>
@@ -179,7 +179,7 @@ export default function RestaurantPage({ theme, setTheme }) {
 
       {totalItems > 0 && (
         <button className="cart-fab" onClick={() => setCartOpen(true)}>
-          ?? {totalItems} {totalItems === 1 ? 'item' : 'items'} � �{totalPrice.toFixed(2)}
+          🛒 {totalItems} {totalItems === 1 ? 'item' : 'items'} · ₪{totalPrice.toFixed(2)}
         </button>
       )}
 
