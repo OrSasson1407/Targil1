@@ -58,7 +58,7 @@ export default function HomePage({ theme, setTheme }) {
         {/* Hero */}
         {!searchQuery && (
           <div className="hero">
-            <h1 className="hero-title">Hungry? We've got you ??</h1>
+            <h1 className="hero-title">Hungry? We've got you 🍕</h1>
             <p className="hero-sub">Order food from the best restaurants near you</p>
           </div>
         )}
@@ -69,7 +69,7 @@ export default function HomePage({ theme, setTheme }) {
             <h2>Results for "<strong>{searchQuery}</strong>"</h2>
             {searchResults && (
               <p className="search-meta">
-                {searchResults.restaurants?.length || 0} restaurants �{' '}
+                {searchResults.restaurants?.length || 0} restaurants 🍴{' '}
                 {searchResults.products?.length || 0} dishes
               </p>
             )}
@@ -96,7 +96,7 @@ export default function HomePage({ theme, setTheme }) {
           {!searchQuery && (
             <div className="section-header">
               <h2 className="section-title">
-                {activeCategory === 'All' ? '?? All Restaurants' : ??? }
+{activeCategory === 'All' ? '🍽️ All Restaurants' : activeCategory}
               </h2>
               <button className="btn btn-outline btn-sm" onClick={() => navigate('/manage')}>
                 + Add Restaurant
@@ -114,7 +114,7 @@ export default function HomePage({ theme, setTheme }) {
 
           {!loading && !error && displayedRestaurants.length === 0 && (
             <div className="empty-state">
-              <span className="empty-icon">???</span>
+              <span className="empty-icon">🍽️</span>
               <p>{searchQuery ? 'No restaurants found for your search' : 'No restaurants yet. Add one!'}</p>
               {!searchQuery && (
                 <button className="btn btn-primary" style={{marginTop:16}} onClick={() => navigate('/manage')}>
@@ -136,7 +136,7 @@ export default function HomePage({ theme, setTheme }) {
         {/* Dish results from search */}
         {searchQuery && searchResults?.products?.length > 0 && (
           <section className="section">
-            <h2 className="section-title">?? Matching Dishes</h2>
+            <h2 className="section-title">🍴 Matching Dishes</h2>
             <div className="products-list">
               {searchResults.products.map(p => (
                 <div key={p.id} className="product-row card" onClick={() => navigate('/restaurant/' + p.restaurantId)}>
@@ -144,7 +144,7 @@ export default function HomePage({ theme, setTheme }) {
                     <span className="product-row-name">{p.name}</span>
                     {p.description && <span className="product-row-desc">{p.description}</span>}
                   </div>
-                  <span className="product-row-price">�{p.price?.toFixed(2)}</span>
+                  <span className="product-row-price">ן¿½{p.price?.toFixed(2)}</span>
                 </div>
               ))}
             </div>

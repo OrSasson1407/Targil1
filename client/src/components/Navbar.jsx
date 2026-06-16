@@ -28,12 +28,12 @@ export default function Navbar({ theme, setTheme, onSearch }) {
     <nav className="navbar">
       <div className="navbar-inner">
         <div className="navbar-brand" onClick={() => navigate('/')}>
-          <span className="navbar-logo">??</span>
+          <span className="navbar-logo">🍔</span>
           <span className="navbar-name">Wolt</span>
         </div>
 
         <form className="navbar-search" onSubmit={handleSearch}>
-          <span className="search-icon">??</span>
+          <span className="search-icon">🔍</span>
           <input
             ref={searchRef}
             className="search-input"
@@ -49,7 +49,7 @@ export default function Navbar({ theme, setTheme, onSearch }) {
             onClick={() => setTheme(t => t === 'light' ? 'dark' : 'light')}
             title="Toggle theme"
           >
-            {theme === 'light' ? '??' : '??'}
+            {theme === 'light' ? '🌙' : '☀️'}
           </button>
 
           {user ? (
@@ -74,14 +74,14 @@ export default function Navbar({ theme, setTheme, onSearch }) {
                   </div>
                   <hr className="dropdown-divider" />
                   <button className="dropdown-item" onClick={() => { setMenuOpen(false); navigate('/orders'); }}>
-                    ?? My Orders
+                    📦 My Orders
                   </button>
                   <button className="dropdown-item" onClick={() => { setMenuOpen(false); navigate('/manage'); }}>
-                    ??? Manage Restaurants
+                    🏪 Manage Restaurants
                   </button>
                   <hr className="dropdown-divider" />
                   <button className="dropdown-item dropdown-item-danger" onClick={handleLogout}>
-                    ?? Sign out
+                    🚪 Sign out
                   </button>
                 </div>
               )}

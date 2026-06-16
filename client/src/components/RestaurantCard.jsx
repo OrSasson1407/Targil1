@@ -2,9 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import './RestaurantCard.css';
 
 const CUISINE_EMOJI = {
-  pizza: '??', burger: '??', sushi: '??', chinese: '??',
-  italian: '??', mexican: '??', indian: '??', salad: '??',
-  dessert: '??', coffee: '?', default: '???'
+  pizza: '🍕', burger: '🍔', sushi: '🍣', chinese: '🥡',
+  italian: '🍝', mexican: '🌮', indian: '🍛', salad: '🥗',
+  dessert: '🍰', coffee: '☕', default: '🍽️'
 };
 
 function getCuisineEmoji(type = '') {
@@ -30,10 +30,10 @@ export default function RestaurantCard({ restaurant }) {
           <span className="r-card-tag">{restaurant.cuisineType}</span>
         )}
         {restaurant.address && (
-          <p className="r-card-info">?? {restaurant.address}</p>
+          <p className="r-card-info">📍 {restaurant.address}</p>
         )}
         {restaurant.openingHours && (
-          <p className="r-card-info">?? {restaurant.openingHours}</p>
+          <p className="r-card-info">🕐 {restaurant.openingHours}</p>
         )}
       </div>
     </div>
