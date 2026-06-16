@@ -1,5 +1,4 @@
 'use strict';
-
 const express = require('express');
 const router = express.Router();
 
@@ -9,36 +8,31 @@ const restaurantsCtrl = require('../controllers/restaurantsController');
 const productsCtrl    = require('../controllers/productsController');
 const ordersCtrl      = require('../controllers/ordersController');
 const searchCtrl      = require('../controllers/searchController');
+const { authMiddleware } = require('../middleware/auth');
 
-// ── Users ─────────────────────────────────────────────────────────────────────
-router.post('/users',     usersCtrl.registerUser);
-router.get('/users/:id',  usersCtrl.getUser);
+router.post('/users',    usersCtrl.registerUser);
+router.get('/users/:id', usersCtrl.getUser);
 
-// ── Authentication ────────────────────────────────────────────────────────────
 router.post('/tokens', tokensCtrl.login);
 
-// ── Restaurants ───────────────────────────────────────────────────────────────
-router.get('/restaurants',      restaurantsCtrl.getAllRestaurants);
-router.post('/restaurants',     restaurantsCtrl.createRestaurant);
-router.get('/restaurants/:id',  restaurantsCtrl.getRestaurant);
-router.patch('/restaurants/:id', restaurantsCtrl.updateRestaurant);
-router.delete('/restaurants/:id', restaurantsCtrl.deleteRestaurant);
+router.get('/restaurants',         restaurantsCtrl.getAllRestaurants);
+router.post('/restaurants',        authMiddleware, restaurantsCtrl.createRestaurant);
+router.get('/restaurants/:id',     restaurantsCtrl.getRestaurant);
+router.patch('/restaurants/:id',   authMiddleware, restaurantsCtrl.updateRestaurant);
+router.delete('/restaurants/:id',  authMiddleware, restaurantsCtrl.deleteRestaurant);
 
-// ── Products (menu items) ─────────────────────────────────────────────────────
-router.get('/restaurants/:id/products',        productsCtrl.getProducts);
-router.post('/restaurants/:id/products',       productsCtrl.createProduct);
-router.get('/restaurants/:id/products/:pId',   productsCtrl.getProduct);
-router.patch('/restaurants/:id/products/:pId', productsCtrl.updateProduct);
-router.delete('/restaurants/:id/products/:pId', productsCtrl.deleteProduct);
+router.get('/restaurants/:id/products',         productsCtrl.getProducts);
+router.post('/restaurants/:id/products',        authMiddleware, productsCtrl.createProduct);
+router.get('/restaurants/:id/products/:pId',    productsCtrl.getProduct);
+router.patch('/restaurants/:id/products/:pId',  authMiddleware, productsCtrl.updateProduct);
+router.delete('/restaurants/:id/products/:pId', authMiddleware, productsCtrl.deleteProduct);
 
-// ── Orders ────────────────────────────────────────────────────────────────────
-router.post('/orders',    ordersCtrl.createOrder);
-router.get('/orders',     ordersCtrl.getOrders);
-router.get('/orders/:id', ordersCtrl.getOrder);
-router.patch('/orders/:id', ordersCtrl.updateOrder);
-router.delete('/orders/:id', ordersCtrl.deleteOrder);
+router.post('/orders',       authMiddleware, ordersCtrl.createOrder);
+router.get('/orders',        authMiddleware, ordersCtrl.getOrders);
+router.get('/orders/:id',    authMiddleware, ordersCtrl.getOrder);
+router.patch('/orders/:id',  authMiddleware, ordersCtrl.updateOrder);
+router.delete('/orders/:id', authMiddleware, ordersCtrl.deleteOrder);
 
-// ── Search ────────────────────────────────────────────────────────────────────
 router.get('/search/:query', searchCtrl.search);
 
 module.exports = router;

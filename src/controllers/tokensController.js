@@ -1,25 +1,20 @@
 'use strict';
-
 const store = require('../models/store');
+const jwt = require('jsonwebtoken');
 
-/**
- * POST /api/tokens
- * Authenticate a user. Body: { username, password }
- * Returns the user id on success (token-based auth will be added in Ex4).
- */
+const JWT_SECRET = process.env.JWT_SECRET || 'wolt_dev_secret_1234';
+
 function login(req, res) {
   const { username, password } = req.body;
-
   if (!username || !password) {
     return res.status(400).json({ error: 'username and password are required' });
   }
-
   const user = store.getUserByUsername(username);
   if (!user || user.password !== password) {
     return res.status(401).json({ error: 'Invalid credentials' });
   }
-
-  return res.status(200).json({ userId: user.id });
+  const token = jwt.sign({ userId: user.id, username: user.username }, JWT_SECRET, { expiresIn: '7d' });
+  return res.status(200).json({ token, userId: user.id });
 }
 
-module.exports = { login };
+module.exports = { login, JWT_SECRET };
