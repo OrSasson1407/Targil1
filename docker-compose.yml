@@ -1,6 +1,14 @@
 version: '3.9'
 
 services:
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
   ex2-server:
     build:
       context: .
@@ -22,5 +30,10 @@ services:
       EX2_HOST: "ex2-server"
       EX2_PORT: "5555"
       JWT_SECRET: "wolt_dev_secret_1234"
+      MONGO_URI: "mongodb://mongo:27017/wolt"
     depends_on:
+      - mongo
       - ex2-server
+
+volumes:
+  mongo_data:

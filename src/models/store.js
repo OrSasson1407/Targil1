@@ -1,224 +1,124 @@
 'use strict';
+const User       = require('./mongoose/User');
+const Restaurant = require('./mongoose/Restaurant');
+const Product    = require('./mongoose/Product');
+const Order      = require('./mongoose/Order');
 
-/**
- * In-memory data store.
- * All data is lost on server restart (as required by the assignment).
- * Provides simple CRUD access to the four core collections.
- */
-
-const { v4: uuidv4 } = require('uuid');
-
-// ─── Collections ────────────────────────────────────────────────────────────
-
-/** @type {Map<string, Object>} id → user */
-const users = new Map();
-
-/** @type {Map<string, Object>} id → restaurant */
-const restaurants = new Map();
-
-/** @type {Map<string, Object>} id → product  (product stores restaurantId) */
-const products = new Map();
-
-/** @type {Map<string, Object>} id → order */
-const orders = new Map();
-
-// ─── Users ───────────────────────────────────────────────────────────────────
-
-function createUser({ username, password, name, phone, address }) {
-  if (!username || !password || !name || !phone || !address) return null;
-  if (getUserByUsername(username)) return null; // duplicate
-  const id = uuidv4();
-  const user = { id, username, password, name, phone, address };
-  users.set(id, user);
-  return user;
+function doc(d) {
+  if (!d) return null;
+  const obj = d.toObject ? d.toObject() : { ...d };
+  obj.id = obj._id ? obj._id.toString() : obj.id;
+  return obj;
 }
 
-function getUserById(id) {
-  return users.get(id) || null;
+// Users
+async function createUser({ username, password, name, phone, address, imageUrl }) {
+  try { return doc(await User.create({ username, password, name, phone, address, imageUrl: imageUrl || '' })); }
+  catch { return null; }
+}
+async function getUserById(id) {
+  try { return doc(await User.findById(id)); } catch { return null; }
+}
+async function getUserByUsername(username) {
+  try { return doc(await User.findOne({ username })); } catch { return null; }
 }
 
-function getUserByUsername(username) {
-  for (const u of users.values()) {
-    if (u.username === username) return u;
-  }
-  return null;
-}
-
-// ─── Restaurants ─────────────────────────────────────────────────────────────
-
-function createRestaurant({ name, address, phone, cuisineType, openingHours }) {
+// Restaurants
+async function createRestaurant({ name, address, phone, cuisineType, openingHours, imageUrl }) {
   if (!name) return null;
-  const id = uuidv4();
-  const restaurant = {
-    id,
-    name,
-    address: address || '',
-    phone: phone || '',
-    cuisineType: cuisineType || '',
-    openingHours: openingHours || '',
-  };
-  restaurants.set(id, restaurant);
-  return restaurant;
+  const r = await Restaurant.create({ name, address: address||'', phone: phone||'', cuisineType: cuisineType||'', openingHours: openingHours||'', imageUrl: imageUrl||'' });
+  return doc(r);
+}
+async function getAllRestaurants() {
+  return (await Restaurant.find()).map(doc);
+}
+async function getRestaurantById(id) {
+  try { return doc(await Restaurant.findById(id)); } catch { return null; }
+}
+async function updateRestaurant(id, fields) {
+  try {
+    const allowed = ['name','address','phone','cuisineType','openingHours','imageUrl'];
+    const upd = {};
+    for (const k of allowed) if (fields[k] !== undefined) upd[k] = fields[k];
+    return doc(await Restaurant.findByIdAndUpdate(id, upd, { new: true }));
+  } catch { return null; }
+}
+async function deleteRestaurant(id) {
+  try {
+    const r = await Restaurant.findByIdAndDelete(id);
+    if (!r) return false;
+    await Product.deleteMany({ restaurantId: id });
+    return true;
+  } catch { return false; }
 }
 
-function getAllRestaurants() {
-  return Array.from(restaurants.values());
+// Products
+async function createProduct(restaurantId, { name, description, price, category, imageUrl }) {
+  try {
+    const r = await Restaurant.findById(restaurantId);
+    if (!r || !name || price === undefined) return null;
+    const p = await Product.create({ restaurantId, name, description: description||'', price: Number(price), category: category||'', imageUrl: imageUrl||'' });
+    return doc(p);
+  } catch { return null; }
+}
+async function getProductsByRestaurant(restaurantId) {
+  try { return (await Product.find({ restaurantId })).map(doc); } catch { return []; }
+}
+async function getProductById(restaurantId, productId) {
+  try { return doc(await Product.findOne({ _id: productId, restaurantId })); } catch { return null; }
+}
+async function getProductByIdGlobal(productId) {
+  try { return doc(await Product.findById(productId)); } catch { return null; }
+}
+async function updateProduct(restaurantId, productId, fields) {
+  try {
+    const allowed = ['name','description','price','category','imageUrl'];
+    const upd = {};
+    for (const k of allowed) if (fields[k] !== undefined) upd[k] = k === 'price' ? Number(fields[k]) : fields[k];
+    return doc(await Product.findOneAndUpdate({ _id: productId, restaurantId }, upd, { new: true }));
+  } catch { return null; }
+}
+async function deleteProduct(restaurantId, productId) {
+  try { return !!(await Product.findOneAndDelete({ _id: productId, restaurantId })); } catch { return false; }
 }
 
-function getRestaurantById(id) {
-  return restaurants.get(id) || null;
+// Orders
+async function createOrder(userId, { restaurantId, items, deliveryAddress }) {
+  try { return doc(await Order.create({ userId, restaurantId, items, deliveryAddress: deliveryAddress||'', status: 'pending' })); }
+  catch { return null; }
+}
+async function getOrdersByUser(userId) {
+  try { return (await Order.find({ userId })).map(doc); } catch { return []; }
+}
+async function getOrderById(id) {
+  try { return doc(await Order.findById(id)); } catch { return null; }
+}
+async function updateOrder(id, fields) {
+  try {
+    const allowed = ['deliveryAddress','status','items'];
+    const upd = {};
+    for (const k of allowed) if (fields[k] !== undefined) upd[k] = fields[k];
+    return doc(await Order.findByIdAndUpdate(id, upd, { new: true }));
+  } catch { return null; }
+}
+async function deleteOrder(id) {
+  try { return !!(await Order.findByIdAndDelete(id)); } catch { return false; }
 }
 
-function updateRestaurant(id, fields) {
-  const r = restaurants.get(id);
-  if (!r) return null;
-  const allowed = ['name', 'address', 'phone', 'cuisineType', 'openingHours'];
-  for (const key of allowed) {
-    if (fields[key] !== undefined) r[key] = fields[key];
-  }
-  return r;
-}
-
-function deleteRestaurant(id) {
-  if (!restaurants.has(id)) return false;
-  restaurants.delete(id);
-  // cascade-delete products belonging to this restaurant
-  for (const [pid, p] of products.entries()) {
-    if (p.restaurantId === id) products.delete(pid);
-  }
-  return true;
-}
-
-// ─── Products ────────────────────────────────────────────────────────────────
-
-function createProduct(restaurantId, { name, description, price, category }) {
-  if (!restaurants.has(restaurantId)) return null;
-  if (!name || price === undefined) return null;
-  const id = uuidv4();
-  const product = {
-    id,
-    restaurantId,
-    name,
-    description: description || '',
-    price: Number(price),
-    category: category || '',
-  };
-  products.set(id, product);
-  return product;
-}
-
-function getProductsByRestaurant(restaurantId) {
-  const result = [];
-  for (const p of products.values()) {
-    if (p.restaurantId === restaurantId) result.push(p);
-  }
-  return result;
-}
-
-function getProductById(restaurantId, productId) {
-  const p = products.get(productId);
-  if (!p || p.restaurantId !== restaurantId) return null;
-  return p;
-}
-
-function getProductByIdGlobal(productId) {
-  return products.get(productId) || null;
-}
-
-function updateProduct(restaurantId, productId, fields) {
-  const p = products.get(productId);
-  if (!p || p.restaurantId !== restaurantId) return null;
-  const allowed = ['name', 'description', 'price', 'category'];
-  for (const key of allowed) {
-    if (fields[key] !== undefined) {
-      p[key] = key === 'price' ? Number(fields[key]) : fields[key];
-    }
-  }
-  return p;
-}
-
-function deleteProduct(restaurantId, productId) {
-  const p = products.get(productId);
-  if (!p || p.restaurantId !== restaurantId) return false;
-  products.delete(productId);
-  return true;
-}
-
-// ─── Orders ──────────────────────────────────────────────────────────────────
-
-/**
- * items: [{ productId, quantity }]
- */
-function createOrder(userId, { restaurantId, items, deliveryAddress }) {
-  if (!restaurantId || !items || !Array.isArray(items) || items.length === 0) return null;
-  if (!restaurants.has(restaurantId)) return null;
-  if (!users.has(userId)) return null;
-
-  const id = uuidv4();
-  const order = {
-    id,
-    userId,
-    restaurantId,
-    items: items.map(i => ({ productId: i.productId, quantity: Number(i.quantity) || 1 })),
-    deliveryAddress: deliveryAddress || '',
-    status: 'pending',
-    createdAt: new Date().toISOString(),
-  };
-  orders.set(id, order);
-  return order;
-}
-
-function getOrdersByUser(userId) {
-  const result = [];
-  for (const o of orders.values()) {
-    if (o.userId === userId) result.push(o);
-  }
-  return result;
-}
-
-function getOrderById(id) {
-  return orders.get(id) || null;
-}
-
-function updateOrder(id, fields) {
-  const o = orders.get(id);
-  if (!o) return null;
-  const allowed = ['deliveryAddress', 'status', 'items'];
-  for (const key of allowed) {
-    if (fields[key] !== undefined) o[key] = fields[key];
-  }
-  return o;
-}
-
-function deleteOrder(id) {
-  if (!orders.has(id)) return false;
-  orders.delete(id);
-  return true;
-}
-
-// ─── Search ──────────────────────────────────────────────────────────────────
-
-function search(query) {
-  const q = query.toLowerCase();
-  const matchedRestaurants = Array.from(restaurants.values()).filter(
-    r => r.name.toLowerCase().includes(q) || r.cuisineType.toLowerCase().includes(q)
-  );
-  const matchedProducts = Array.from(products.values()).filter(
-    p => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)
-  );
-  return { restaurants: matchedRestaurants, products: matchedProducts };
+// Search
+async function search(query) {
+  const q = new RegExp(query, 'i');
+  const [restaurants, products] = await Promise.all([
+    Restaurant.find({ $or: [{ name: q }, { cuisineType: q }] }),
+    Product.find({ $or: [{ name: q }, { description: q }] }),
+  ]);
+  return { restaurants: restaurants.map(doc), products: products.map(doc) };
 }
 
 module.exports = {
-  // users
   createUser, getUserById, getUserByUsername,
-  // restaurants
   createRestaurant, getAllRestaurants, getRestaurantById, updateRestaurant, deleteRestaurant,
-  // products
-  createProduct, getProductsByRestaurant, getProductById, getProductByIdGlobal,
-  updateProduct, deleteProduct,
-  // orders
+  createProduct, getProductsByRestaurant, getProductById, getProductByIdGlobal, updateProduct, deleteProduct,
   createOrder, getOrdersByUser, getOrderById, updateOrder, deleteOrder,
-  // search
   search,
 };
