@@ -1,12 +1,19 @@
 'use strict';
-
+const mongoose = require('mongoose');
 const createApp = require('./src/app');
 
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const PORT      = parseInt(process.env.PORT || '3000', 10);
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/wolt';
 
-const app = createApp();
-
-app.listen(PORT, () => {
-  console.log(`[Web Server] listening on port ${PORT}`);
-  console.log(`[Ex-2 Client] will connect to ${process.env.EX2_HOST || '127.0.0.1'}:${process.env.EX2_PORT || '5555'}`);
-});
+mongoose.connect(MONGO_URI)
+  .then(() => {
+    console.log('[MongoDB] connected to', MONGO_URI);
+    const app = createApp();
+    app.listen(PORT, () => {
+      console.log('[Web Server] listening on port', PORT);
+    });
+  })
+  .catch(err => {
+    console.error('[MongoDB] connection error:', err.message);
+    process.exit(1);
+  });
