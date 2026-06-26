@@ -82,14 +82,59 @@ async function deleteProduct(restaurantId, productId) {
   try { return !!(await Product.findOneAndDelete({ _id: productId, restaurantId })); } catch { return false; }
 }
 
-// Orders
+// Orders — populate product name+price so the mobile app can display them
 async function createOrder(userId, { restaurantId, items, deliveryAddress }) {
   try { return doc(await Order.create({ userId, restaurantId, items, deliveryAddress: deliveryAddress||'', status: 'pending' })); }
   catch { return null; }
 }
+
 async function getOrdersByUser(userId) {
-  try { return (await Order.find({ userId })).map(doc); } catch { return []; }
+  try {
+    const orders = await Order.find({ userId }).populate('restaurantId', 'name').lean();
+    return orders.map(o => {
+      const base = { ...o, id: o._id.toString() };
+      // Flatten restaurant name
+      if (o.restaurantId && typeof o.restaurantId === 'object') {
+        base.restaurantName = o.restaurantId.name || '';
+        base.restaurantId   = o.restaurantId._id.toString();
+      }
+      return base;
+    });
+  } catch { return []; }
 }
+
+async function getOrdersByUserWithProducts(userId) {
+  try {
+    const orders = await Order.find({ userId })
+      .populate('restaurantId', 'name')
+      .lean();
+
+    return await Promise.all(orders.map(async o => {
+      const enrichedItems = await Promise.all((o.items || []).map(async item => {
+        const pid = item.productId ? item.productId.toString() : null;
+        let productName  = '';
+        let productPrice = 0;
+        if (pid) {
+          const p = await Product.findById(pid).lean().catch(() => null);
+          if (p) { productName = p.name; productPrice = p.price; }
+        }
+        return { productId: pid, name: productName, price: productPrice, quantity: item.quantity || 1 };
+      }));
+
+      return {
+        id:              o._id.toString(),
+        restaurantId:    o.restaurantId?._id?.toString() || o.restaurantId?.toString() || '',
+        restaurantName:  o.restaurantId?.name || '',
+        items:           enrichedItems,
+        deliveryAddress: o.deliveryAddress || '',
+        status:          o.status || 'pending',
+        createdAt:       o.createdAt,
+        total:           enrichedItems.reduce((s, i) => s + i.price * i.quantity, 0),
+      };
+    }));
+  } catch { return []; }
+}
+
 async function getOrderById(id) {
   try { return doc(await Order.findById(id)); } catch { return null; }
 }
@@ -119,6 +164,6 @@ module.exports = {
   createUser, getUserById, getUserByUsername,
   createRestaurant, getAllRestaurants, getRestaurantById, updateRestaurant, deleteRestaurant,
   createProduct, getProductsByRestaurant, getProductById, getProductByIdGlobal, updateProduct, deleteProduct,
-  createOrder, getOrdersByUser, getOrderById, updateOrder, deleteOrder,
+  createOrder, getOrdersByUser, getOrdersByUserWithProducts, getOrderById, updateOrder, deleteOrder,
   search,
 };

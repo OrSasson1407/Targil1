@@ -13,7 +13,7 @@ export default function ProductCard({ product, restaurant }) {
           {product.category && <span className="p-card-cat">{product.category}</span>}
           <h4 className="p-card-name">{product.name}</h4>
           {product.description && <p className="p-card-desc">{product.description}</p>}
-          <span className="p-card-price">¤{product.price?.toFixed(2)}</span>
+          <span className="p-card-price">&#x20AA;{product.price?.toFixed(2)}</span>
         </div>
         <div className="p-card-action">
           {qty === 0 ? (
@@ -22,7 +22,7 @@ export default function ProductCard({ product, restaurant }) {
             </button>
           ) : (
             <div className="qty-control">
-              <button className="qty-btn" onClick={() => removeItem(product.id)}>?</button>
+              <button className="qty-btn" onClick={() => removeItem(product.id)}>-</button>
               <span className="qty-val">{qty}</span>
               <button className="qty-btn" onClick={() => addItem(restaurant, product)}>+</button>
             </div>

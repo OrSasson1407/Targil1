@@ -1,0 +1,16 @@
+FROM gcc:13 AS builder
+WORKDIR /app
+COPY src/main.cpp src/CLI.cpp src/CLI.h src/FileStorage.cpp src/FileStorage.h \
+     src/UserDataStore.cpp src/UserDataStore.h src/CollaborativeRecommender.cpp \
+     src/CollaborativeRecommender.h src/Commands.cpp src/Commands.h \
+     src/ICommandHandler.h src/IDataStorage.h src/IRecommender.h ./src/
+RUN g++ -std=c++17 -O2 -static -o server \
+    src/main.cpp src/CLI.cpp src/FileStorage.cpp src/UserDataStore.cpp \
+    src/CollaborativeRecommender.cpp src/Commands.cpp
+
+FROM debian:bookworm-slim
+WORKDIR /app
+RUN mkdir -p data
+COPY --from=builder /app/server ./server
+EXPOSE 5555
+CMD ["./server", "5555"]
