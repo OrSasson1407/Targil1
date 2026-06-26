@@ -14,30 +14,35 @@ async function createOrder(req, res) {
   res.setHeader('Location', '/api/orders/' + order.id);
   return res.status(201).json(order);
 }
+
 async function getOrders(req, res) {
   const userId = req.userId;
   if (!userId) return res.status(401).json({ error: 'Authentication required' });
-  return res.status(200).json(await store.getOrdersByUser(userId));
+  // Use enriched version so mobile gets product names + prices + restaurant name
+  return res.status(200).json(await store.getOrdersByUserWithProducts(userId));
 }
+
 async function getOrder(req, res) {
   const userId = req.userId;
-  const order = await store.getOrderById(req.params.id);
+  const order  = await store.getOrderById(req.params.id);
   if (!order) return res.status(404).json({ error: 'Order not found' });
   if (order.userId.toString() !== userId) return res.status(403).json({ error: 'Forbidden' });
   return res.status(200).json(order);
 }
+
 async function updateOrder(req, res) {
   const userId = req.userId;
-  const order = await store.getOrderById(req.params.id);
+  const order  = await store.getOrderById(req.params.id);
   if (!order) return res.status(404).json({ error: 'Order not found' });
   if (order.userId.toString() !== userId) return res.status(403).json({ error: 'Forbidden' });
   const updated = await store.updateOrder(req.params.id, req.body);
   if (!updated) return res.status(500).json({ error: 'Could not update order' });
   return res.status(204).end();
 }
+
 async function deleteOrder(req, res) {
   const userId = req.userId;
-  const order = await store.getOrderById(req.params.id);
+  const order  = await store.getOrderById(req.params.id);
   if (!order) return res.status(404).json({ error: 'Order not found' });
   if (order.userId.toString() !== userId) return res.status(403).json({ error: 'Forbidden' });
   await store.deleteOrder(req.params.id);

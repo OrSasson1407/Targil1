@@ -24,23 +24,25 @@ async function req(method, path, body, auth = true) {
 }
 
 export const api = {
-  login:   (body) => req('POST', '/tokens', body, false),
-  register:(body) => req('POST', '/users',  body, false),
+  login:    (body) => req('POST', '/tokens', body, false),
+  register: (body) => req('POST', '/users',  body, false),
+  getMe:    ()     => req('GET',  '/users/me'),
+  getUser:  (id)   => req('GET',  '/users/' + id),
 
-  getRestaurants: ()     => req('GET', '/restaurants'),
-  getRestaurant:  (id)   => req('GET', '/restaurants/' + id),
-  createRestaurant:(body)=> req('POST','/restaurants', body),
-  updateRestaurant:(id,b)=> req('PATCH','/restaurants/'+id, b),
-  deleteRestaurant:(id)  => req('DELETE','/restaurants/'+id),
+  getRestaurants:  ()        => req('GET',    '/restaurants'),
+  getRestaurant:   (id)      => req('GET',    '/restaurants/' + id),
+  createRestaurant:(body)    => req('POST',   '/restaurants', body),
+  updateRestaurant:(id, b)   => req('PATCH',  '/restaurants/' + id, b),
+  deleteRestaurant:(id)      => req('DELETE', '/restaurants/' + id),
 
-  getProducts:   (rId)     => req('GET', '/restaurants/'+rId+'/products'),
-  createProduct: (rId,b)   => req('POST','/restaurants/'+rId+'/products', b),
-  updateProduct: (rId,pId,b)=>req('PATCH','/restaurants/'+rId+'/products/'+pId, b),
-  deleteProduct: (rId,pId) => req('DELETE','/restaurants/'+rId+'/products/'+pId),
+  getProducts:    (rId)        => req('GET',    '/restaurants/' + rId + '/products'),
+  createProduct:  (rId, b)     => req('POST',   '/restaurants/' + rId + '/products', b),
+  updateProduct:  (rId, pId, b)=> req('PATCH',  '/restaurants/' + rId + '/products/' + pId, b),
+  deleteProduct:  (rId, pId)   => req('DELETE', '/restaurants/' + rId + '/products/' + pId),
 
-  getOrders:   ()    => req('GET',  '/orders'),
-  createOrder: (body)=> req('POST', '/orders', body),
-  deleteOrder: (id)  => req('DELETE','/orders/'+id),
+  getOrders:   ()     => req('GET',    '/orders'),
+  createOrder: (body) => req('POST',   '/orders', body),
+  deleteOrder: (id)   => req('DELETE', '/orders/' + id),
 
-  search: (q) => req('GET', '/search/'+encodeURIComponent(q)),
+  search: (q) => req('GET', '/search/' + encodeURIComponent(q)),
 };

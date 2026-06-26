@@ -1,6 +1,6 @@
 'use strict';
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
 
 const usersCtrl       = require('../controllers/usersController');
 const tokensCtrl      = require('../controllers/tokensController');
@@ -10,8 +10,9 @@ const ordersCtrl      = require('../controllers/ordersController');
 const searchCtrl      = require('../controllers/searchController');
 const { authMiddleware } = require('../middleware/auth');
 
-router.post('/users',    usersCtrl.registerUser);
-router.get('/users/:id', usersCtrl.getUser);
+router.post('/users',     usersCtrl.registerUser);
+router.get('/users/me',   authMiddleware, usersCtrl.getMe);
+router.get('/users/:id',  usersCtrl.getUser);
 
 router.post('/tokens', tokensCtrl.login);
 

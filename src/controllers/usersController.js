@@ -20,4 +20,12 @@ async function getUser(req, res) {
   return res.status(200).json(pub);
 }
 
-module.exports = { registerUser, getUser };
+// GET /api/users/me  — returns the currently authenticated user's profile
+async function getMe(req, res) {
+  const user = await store.getUserById(req.userId);
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  const { password, ...pub } = user;
+  return res.status(200).json(pub);
+}
+
+module.exports = { registerUser, getUser, getMe };
