@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TextInput,
   TouchableOpacity, Alert, ActivityIndicator, SafeAreaView, Modal, ScrollView,
 } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { api } from '../../src/api';
 import { C } from '../../src/components/colors';
 
@@ -97,7 +98,7 @@ export default function ManageScreen() {
     try { setProducts((await api.getProducts(rId)) || []); } catch { setProducts([]); }
   }, []);
 
-  useEffect(() => { loadRestaurants(); }, [loadRestaurants]);
+  useFocusEffect(loadRestaurants);
   useEffect(() => { if (selected) loadProducts(selected.id); }, [selected, loadProducts]);
 
   const saveRestaurant = async (form) => {
@@ -190,7 +191,7 @@ export default function ManageScreen() {
                 renderItem={({ item }) => (
                   <View style={s.pItem}>
                     <Text style={s.pName} numberOfLines={1}>{item.name}</Text>
-                    <Text style={s.pPrice}>₪{item.price}</Text>
+                    <Text style={s.pPrice}>₪{Number(item.price).toFixed(2)}</Text>
                     <View style={s.rActions}>
                       <TouchableOpacity onPress={() => setPModal({ open: true, item })}><Text style={s.editTxt}>✏️</Text></TouchableOpacity>
                       <TouchableOpacity onPress={() => deleteProduct(item)}><Text style={s.delTxt}>🗑️</Text></TouchableOpacity>
@@ -247,3 +248,5 @@ const fm = StyleSheet.create({
   label:  { fontSize: 13, fontWeight: '600', color: C.sub, marginBottom: 4 },
   input:  { borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 12, fontSize: 15, backgroundColor: C.bg },
 });
+
+

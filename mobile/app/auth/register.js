@@ -80,7 +80,7 @@ export default function RegisterScreen() {
               style={[s.input, errors[r.key] && s.inputErr]}
               placeholder={r.label}
               secureTextEntry={r.key === 'password' || r.key === 'confirm'}
-              autoCapitalize={r.key === 'username' ? 'none' : 'words'}
+              autoCapitalize={r.key === 'username' || r.key === 'password' || r.key === 'confirm' ? 'none' : 'words'}
               keyboardType={r.key === 'phone' ? 'phone-pad' : 'default'}
               value={form[r.key]}
               onChangeText={v => set(r.key, v)}

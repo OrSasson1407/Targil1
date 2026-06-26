@@ -1,9 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+﻿import { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TextInput,
   TouchableOpacity, ActivityIndicator, RefreshControl, SafeAreaView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import { api } from '../../src/api';
 import { C } from '../../src/components/colors';
 
@@ -29,15 +30,18 @@ export default function HomeScreen() {
   const [loading, setLoading]         = useState(true);
   const [refreshing, setRefreshing]   = useState(false);
 
-  const load = useCallback(async () => {
-    try {
-      const data = await api.getRestaurants();
-      setRestaurants(data || []);
-    } catch { /* ignore */ }
-    finally { setLoading(false); setRefreshing(false); }
+  const load = useCallback(() => {
+    async function fetch() {
+      try {
+        const data = await api.getRestaurants();
+        setRestaurants(data || []);
+      } catch { setRestaurants([]); }
+      finally { setLoading(false); setRefreshing(false); }
+    }
+    fetch();
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useFocusEffect(load);
 
   const filtered = query.trim()
     ? restaurants.filter(r =>

@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, SafeAreaView,
   Alert, ActivityIndicator, ScrollView, Image,
 } from 'react-native';
+import { useFocusEffect } from 'expo-router';
 import { useAuth } from '../../src/context/AuthContext';
 import { useRouter } from 'expo-router';
 import { api } from '../../src/api';
@@ -33,7 +34,7 @@ export default function ProfileScreen() {
     finally { setLoading(false); }
   }, []);
 
-  useEffect(() => { loadProfile(); }, [loadProfile]);
+  useFocusEffect(loadProfile);
 
   const handleLogout = () => {
     Alert.alert('Sign out', 'Are you sure you want to sign out?', [
@@ -125,3 +126,4 @@ const s = StyleSheet.create({
                     paddingVertical: 15, alignItems: 'center' },
   logoutTxt:      { color: '#fff', fontWeight: '700', fontSize: 16 },
 });
+

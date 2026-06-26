@@ -5,9 +5,9 @@ import {
   Alert, TextInput, StatusBar, Platform,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { api } from '../../../src/api';
-import { useCart } from '../../../src/context/CartContext';
-import { C } from '../../../src/components/colors';
+import { api } from '../../src/api';
+import { useCart } from '../../src/context/CartContext';
+import { C } from '../../src/components/colors';
 
 /* ─── Product card with inline qty controls ─────────────────────────── */
 function ProductCard({ item, qty, onAdd, onDecrement }) {
@@ -140,7 +140,7 @@ export default function RestaurantScreen() {
       const [r, p] = await Promise.all([api.getRestaurant(id), api.getProducts(id)]);
       setRestaurant(r);
       setProducts(p || []);
-    } catch { /* ignore */ }
+    } catch (e) { Alert.alert('Error', 'Could not load restaurant. Please check your connection.'); }
     finally { setLoading(false); }
   }, [id]);
 
