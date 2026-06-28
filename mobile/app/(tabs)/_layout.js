@@ -1,5 +1,5 @@
-import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
+﻿import { Tabs } from 'expo-router';
+import { Text, View, ActivityIndicator } from 'react-native';
 import { useAuth } from '../../src/context/AuthContext';
 import { Redirect } from 'expo-router';
 import { C } from '../../src/components/colors';
@@ -10,7 +10,14 @@ function Icon({ symbol, color }) {
 
 export default function TabsLayout() {
   const { user, loading } = useAuth();
-  if (!loading && !user) return <Redirect href="/auth/login" />;
+
+  if (loading) return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <ActivityIndicator size="large" color={C.blue} />
+    </View>
+  );
+
+  if (!user) return <Redirect href="/auth/login" />;
 
   return (
     <Tabs screenOptions={{
