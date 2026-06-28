@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, FlatList, TextInput,
   TouchableOpacity, Alert, ActivityIndicator, SafeAreaView, Modal, ScrollView,
 } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
 import { api } from '../../src/api';
 import { C } from '../../src/components/colors';
 
@@ -98,8 +98,15 @@ export default function ManageScreen() {
     try { setProducts((await api.getProducts(rId)) || []); } catch { setProducts([]); }
   }, []);
 
-  useFocusEffect(loadRestaurants);
-  useEffect(() => { if (selected) loadProducts(selected.id); }, [selected, loadProducts]);
+  const isFocused = useIsFocused();
+  
+  useEffect(() => { 
+    if (isFocused) loadRestaurants(); 
+  }, [isFocused, loadRestaurants]);
+
+  useEffect(() => { 
+    if (selected) loadProducts(selected.id); 
+  }, [selected, loadProducts]);
 
   const saveRestaurant = async (form) => {
     try {
@@ -248,5 +255,3 @@ const fm = StyleSheet.create({
   label:  { fontSize: 13, fontWeight: '600', color: C.sub, marginBottom: 4 },
   input:  { borderWidth: 1, borderColor: C.border, borderRadius: 10, padding: 12, fontSize: 15, backgroundColor: C.bg },
 });
-
-

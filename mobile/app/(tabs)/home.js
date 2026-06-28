@@ -1,10 +1,10 @@
-﻿import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TextInput,
   TouchableOpacity, ActivityIndicator, RefreshControl, SafeAreaView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useFocusEffect } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
 import { api } from '../../src/api';
 import { C } from '../../src/components/colors';
 
@@ -12,12 +12,12 @@ function RestaurantCard({ item, onPress }) {
   return (
     <TouchableOpacity style={s.card} onPress={onPress} activeOpacity={0.85}>
       <View style={s.cardImg}>
-        <Text style={s.cardEmoji}>🍽️</Text>
+        <Text style={s.cardEmoji}>???</Text>
       </View>
       <View style={s.cardBody}>
         <Text style={s.cardName}>{item.name}</Text>
         <Text style={s.cardSub}>{item.cuisineType || 'Restaurant'}</Text>
-        {item.openingHours ? <Text style={s.cardHours}>🕐 {item.openingHours}</Text> : null}
+        {item.openingHours ? <Text style={s.cardHours}>?? {item.openingHours}</Text> : null}
       </View>
     </TouchableOpacity>
   );
@@ -41,7 +41,7 @@ export default function HomeScreen() {
     fetch();
   }, []);
 
-  useFocusEffect(load);
+  const isFocused = useIsFocused(); useEffect(() => { if (isFocused) load(); }, [isFocused]);
 
   const filtered = query.trim()
     ? restaurants.filter(r =>
@@ -57,7 +57,7 @@ export default function HomeScreen() {
         <Text style={s.headerTitle}>Wolt</Text>
       </View>
       <View style={s.searchBox}>
-        <Text style={s.searchIcon}>🔍</Text>
+        <Text style={s.searchIcon}>??</Text>
         <TextInput
           style={s.searchInput}
           placeholder="Search restaurants or cuisine..."
@@ -99,3 +99,4 @@ const s = StyleSheet.create({
   cardSub:     { color: C.sub, fontSize: 13, marginTop: 3 },
   cardHours:   { color: C.sub, fontSize: 12, marginTop: 4 },
 });
+

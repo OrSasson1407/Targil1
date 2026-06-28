@@ -1,10 +1,10 @@
-﻿import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, FlatList, ActivityIndicator,
   TouchableOpacity, Alert, SafeAreaView, RefreshControl, LayoutAnimation,
   Platform, UIManager,
 } from 'react-native';
-import { useFocusEffect } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
 import { api } from '../../src/api';
 import { C } from '../../src/components/colors';
 
@@ -35,23 +35,23 @@ function OrderCard({ item, onDelete }) {
         <View style={[s.badge, { backgroundColor: ss.bg }]}>
           <Text style={[s.badgeTxt, { color: ss.text }]}>{item.status}</Text>
         </View>
-        <Text style={s.chevron}>{expanded ? '▲' : '▼'}</Text>
+        <Text style={s.chevron}>{expanded ? '?' : '?'}</Text>
       </TouchableOpacity>
       <View style={s.summary}>
         <Text style={s.summaryTxt}>
           {item.items.length} item{item.items.length !== 1 ? 's' : ''}
-          {(item.total ?? 0) > 0 ? `  ·  ₪${item.total.toFixed(2)}` : ''}
+          {(item.total ?? 0) > 0 ? `  ·  ¤${item.total.toFixed(2)}` : ''}
         </Text>
         <Text style={s.dateTxt}>{new Date(item.createdAt).toLocaleString()}</Text>
       </View>
       {expanded && (
         <View style={s.detail}>
-          {item.deliveryAddress ? <Text style={s.addrTxt}>📍 {item.deliveryAddress}</Text> : null}
+          {item.deliveryAddress ? <Text style={s.addrTxt}>?? {item.deliveryAddress}</Text> : null}
           {item.items.map((ci, idx) => (
             <View key={idx} style={s.lineItem}>
               <Text style={s.liName} numberOfLines={1}>{ci.name || 'Item'}</Text>
-              <Text style={s.liQty}>×{ci.quantity}</Text>
-              {ci.price > 0 ? <Text style={s.liPrice}>₪{(ci.price * ci.quantity).toFixed(2)}</Text> : null}
+              <Text style={s.liQty}>ª{ci.quantity}</Text>
+              {ci.price > 0 ? <Text style={s.liPrice}>¤{(ci.price * ci.quantity).toFixed(2)}</Text> : null}
             </View>
           ))}
           {item.status === 'pending' && (
@@ -70,22 +70,30 @@ export default function OrdersScreen() {
   const [loading, setLoading]       = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const load = useCallback(() => {
-    async function fetch() {
-      try { setOrders((await api.getOrders()) || []); }
-      catch { /* ignore */ }
-      finally { setLoading(false); setRefreshing(false); }
-    }
-    fetch();
-  }, []);
+  const isFocused = useIsFocused();
 
-  useFocusEffect(load);
+  useEffect(() => {
+    if (!isFocused) return;
+    let active = true;
+    async function load() {
+      try { 
+        const o = (await api.getOrders()) || []; 
+        if (active) setOrders(o); 
+      }
+      catch { /* ignore */ }
+      finally { 
+        if (active) { setLoading(false); setRefreshing(false); } 
+      }
+    }
+    load();
+    return () => { active = false; };
+  }, [isFocused]);
 
   const handleDelete = (id) => {
     Alert.alert('Cancel order', 'Are you sure you want to cancel this order?', [
       { text: 'No' },
       { text: 'Yes, cancel', style: 'destructive', onPress: async () => {
-        try { await api.deleteOrder(id); load(); }
+        try { await api.deleteOrder(id); setOrders(prev => prev.filter(o => o.id !== id)); }
         catch (e) { Alert.alert('Error', e.message); }
       }},
     ]);
@@ -103,10 +111,10 @@ export default function OrdersScreen() {
         data={[...orders].reverse()}
         keyExtractor={i => i.id}
         contentContainerStyle={s.list}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); load(); }} colors={[C.blue]}/>}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); }} colors={[C.blue]}/>}
         ListEmptyComponent={
           <View style={s.emptyBox}>
-            <Text style={s.emptyEmoji}>🛍️</Text>
+            <Text style={s.emptyEmoji}>???</Text>
             <Text style={s.emptyTitle}>No orders yet</Text>
             <Text style={s.emptySub}>Your completed orders will appear here</Text>
           </View>
